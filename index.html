@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101827">
+  <meta name="description" content="Cronograma individual de estudos com horários, revisões espaçadas e acompanhamento semanal.">
+  <title>Meu Plano de Estudos — Duas Fases</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --surface: #ffffff;
+      --text: #172033;
+      --muted: #687386;
+      --border: #e2e8f0;
+      --primary: #3157d5;
+      --primary-dark: #2444b4;
+      --soft: #edf2ff;
+      --green: #138a63;
+      --shadow: 0 10px 30px rgba(20, 35, 70, .07);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    .hero {
+      color: #fff; background: radial-gradient(circle at top right, #3558ca 0, #17284e 42%, #101827 100%);
+      padding: 36px 20px 70px;
+    }
+    .hero-inner, main { max-width: 1060px; margin: 0 auto; }
+    .eyebrow { color: #b9c9ff; font-size: .78rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    h1 { font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.1; margin: 10px 0; letter-spacing: -.04em; }
+    .hero p { max-width: 650px; color: #dbe4ff; margin: 12px 0 0; }
+    main { padding: 0 18px 44px; margin-top: -42px; }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+    .stat, .panel, .day-card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow); }
+    .stat { padding: 18px; }
+    .stat strong { display: block; font-size: 1.5rem; letter-spacing: -.03em; }
+    .stat span { color: var(--muted); font-size: .84rem; }
+    .panel { padding: 22px; margin-bottom: 20px; }
+    .section-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+    h2 { margin: 0; font-size: 1.25rem; letter-spacing: -.02em; }
+    .sub { color: var(--muted); margin: 5px 0 0; font-size: .93rem; }
+    .schedule { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .day-card { padding: 18px; box-shadow: none; }
+    .day-top { display: flex; align-items: center; gap: 12px; margin-bottom: 13px; }
+    .day-icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 13px; background: var(--soft); font-size: 1.25rem; }
+    .day-name { font-weight: 800; }
+    .day-sub { color: var(--muted); font-size: .82rem; }
+    .subject { font-weight: 750; margin: 0 0 10px; }
+    .timeline { display: grid; gap: 9px; }
+    .slot { display: grid; grid-template-columns: 102px 1fr; gap: 10px; font-size: .91rem; }
+    .time { color: var(--primary); font-weight: 750; font-variant-numeric: tabular-nums; }
+    .slot p { margin: 0; }
+    .tip { margin-top: 12px; padding: 11px 12px; border-radius: 11px; background: #f6f8fc; color: #4c586b; font-size: .87rem; }
+    .weekend { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .weekend h3 { margin: 0 0 12px; font-size: 1.05rem; }
+    .weekend-list { display: grid; gap: 13px; }
+    .weekend-item { display: grid; grid-template-columns: 82px 1fr; gap: 10px; }
+    .weekend-item time { color: var(--primary); font-weight: 800; font-size: .88rem; }
+    .weekend-item strong { display: block; font-size: .92rem; }
+    .weekend-item span { display: block; color: var(--muted); font-size: .86rem; }
+    .note { border-left: 4px solid var(--primary); background: var(--soft); padding: 13px 15px; border-radius: 0 12px 12px 0; color: #293c79; margin-top: 16px; font-size: .92rem; }
+    .review-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+    .review-step { padding: 14px 12px; background: #f8faff; border: 1px solid var(--border); border-radius: 13px; }
+    .review-step strong { display: block; color: var(--primary); margin-bottom: 5px; }
+    .review-step span { color: var(--muted); font-size: .84rem; }
+    .progress-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .progress-track { height: 9px; background: #e9edf5; border-radius: 99px; overflow: hidden; margin-bottom: 17px; }
+    .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #3157d5, #20a879); border-radius: inherit; transition: width .2s; }
+    .checklist { display: grid; gap: 10px; }
+    .check-item { display: flex; align-items: flex-start; gap: 11px; padding: 12px; border: 1px solid var(--border); border-radius: 12px; }
+    .check-item input { width: 19px; height: 19px; margin-top: 2px; accent-color: var(--primary); flex-shrink: 0; }
+    .check-item label { cursor: pointer; flex: 1; }
+    .check-item.done label { color: var(--muted); text-decoration: line-through; }
+    .actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 16px; }
+    .btn { border: 1px solid var(--border); background: #fff; color: var(--text); padding: 10px 14px; border-radius: 11px; font-weight: 700; }
+    .btn.primary { color: #fff; background: var(--primary); border-color: var(--primary); }
+    .btn:hover { filter: brightness(.97); }
+    .routine { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .routine-item { display: flex; justify-content: space-between; gap: 15px; padding: 11px 0; border-bottom: 1px solid var(--border); }
+    .routine-item span { color: var(--muted); }
+    footer { text-align: center; padding: 0 18px 30px; color: var(--muted); font-size: .85rem; }
+    @media (max-width: 760px) {
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .schedule, .weekend, .routine { grid-template-columns: 1fr; }
+      .review-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .section-head { flex-direction: column; }
+      .hero { padding-bottom: 60px; }
+      .panel { padding: 17px; }
+    }
+    @media print {
+      body { background: #fff; }
+      .hero { background: #fff; color: #111; padding: 20px 0 45px; }
+      .hero p, .eyebrow { color: #333; }
+      main { margin-top: -25px; }
+      .stat, .panel, .day-card { box-shadow: none; break-inside: avoid; }
+      .actions, footer .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">Consistência • prática • aprovação</div>
+      <h1>Meu Plano de Estudos</h1>
+      <p>Um plano realista em duas fases para conciliar trabalho, descanso e onze disciplinas. Um passo de cada vez — o importante é continuar.</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="stats" aria-label="Resumo da rotina">
+      <div class="stat"><strong>06h–15h</strong><span>Horário de trabalho</span></div>
+      <div class="stat"><strong>16h00</strong><span>Chegada a casa</span></div>
+      <div class="stat"><strong>17h–19h</strong><span>Estudo principal</span></div>
+      <div class="stat"><strong>21h30</strong><span>Hora de dormir</span></div>
+    </section>
+
+    <section class="panel">
+      <div class="section-head">
+        <div><h2>Plano de segunda a sexta</h2><p class="sub">Descansa das 16h às 17h. Faz uma pausa de 10 minutos entre os dois blocos de estudo.</p></div>
+      </div>
+      <div class="schedule">
+        <article class="day-card">
+          <div class="day-top"><div class="day-icon">📈</div><div><div class="day-name">Segunda-feira</div><div class="day-sub">Matemática</div></div></div>
+          <p class="subject">Análise Matemática I</p>
+          <div class="timeline">
+            <div class="slot"><span class="time">17h00–18h00</span><p>Teoria e exemplos resolvidos</p></div>
+            <div class="slot"><span class="time">18h00–18h10</span><p>Pausa</p></div>
+            <div class="slot"><span class="time">18h10–19h00</span><p>Exercícios sem olhar a solução</p></div>
+          </div>
+          <div class="tip">Foco: compreender os métodos e anotar os passos em que tens dúvidas.</div>
+        </article>
+
+        <article class="day-card">
+          <div class="day-top"><div class="day-icon">⚛️</div><div><div class="day-name">Terça-feira</div><div class="day-sub">Ciências</div></div></div>
+          <p class="subject">Física I</p>
+          <div class="timeline">
+            <div class="slot"><span class="time">17h00–18h00</span><p>Conceitos, leis e fórmulas</p></div>
+            <div class="slot"><span class="time">18h00–18h10</span><p>Pausa</p></div>
+            <div class="slot"><span class="time">18h10–19h00</span><p>Problemas numéricos</p></div>
+          </div>
+          <div class="tip">Foco: perceber qual fórmula usar, porquê e em que condições.</div>
+        </article>
+
+        <article class="day-card">
+          <div class="day-top"><div class="day-icon">🔢</div><div><div class="day-name">Quarta-feira</div><div class="day-sub">Matemática</div></div></div>
+          <p class="subject">Álgebra Linear</p>
+          <div class="timeline">
+            <div class="slot"><span class="time">17h00–18h00</span><p>Conceitos e exemplos</p></div>
+            <div class="slot"><span class="time">18h00–18h10</span><p>Pausa</p></div>
+            <div class="slot"><span class="time">18h10–19h00</span><p>Exercícios e correção</p></div>
+          </div>
+          <div class="tip">Foco: matrizes, determinantes, vetores e sistemas lineares, conforme o programa.</div>
+        </article>
+
+        <article class="day-card">
+          <div class="day-top"><div class="day-icon">🧮</div><div><div class="day-name">Quinta-feira</div><div class="day-sub">Matemática</div></div></div>
+          <p class="subject">Matemática Geral</p>
+          <div class="timeline">
+            <div class="slot"><span class="time">17h00–18h00</span><p>Rever conceitos e exemplos</p></div>
+            <div class="slot"><span class="time">18h00–18h10</span><p>Pausa</p></div>
+            <div class="slot"><span class="time">18h10–19h00</span><p>Exercícios semelhantes aos testes</p></div>
+          </div>
+          <div class="tip">Foco: reforçar os fundamentos em que tens mais dificuldades.</div>
+        </article>
+
+        <article class="day-card">
+          <div class="day-top"><div class="day-icon">💻</div><div><div class="day-name">Sexta-feira</div><div class="day-sub">Programação</div></div></div>
+          <p class="subject">Lógica de Programação</p>
+          <div class="timeline">
+            <div class="slot"><span class="time">17h00–18h00</span><p>Algoritmos e pseudocódigo</p></div>
+            <div class="slot"><span class="time">18h00–18h10</span><p>Pausa</p></div>
+            <div class="slot"><span class="time">18h10–19h00</span><p>Resolver problemas no computador</p></div>
+          </div>
+          <div class="tip">Foco: variáveis, condições, ciclos, funções e raciocínio lógico.</div>
+        </article>
+
+        <article class="day-card">
+          <div class="day-top"><div class="day-icon">🌙</div><div><div class="day-name">Todas as noites</div><div class="day-sub">19h00–21h30</div></div></div>
+          <p class="subject">Descanso e revisão leve</p>
+          <div class="timeline">
+            <div class="slot"><span class="time">19h00–19h45</span><p>Jantar e descanso</p></div>
+            <div class="slot"><span class="time">19h45–20h15</span><p>Revisão leve ou cartões de memória</p></div>
+            <div class="slot"><span class="time">20h15–20h45</span><p>Preparar materiais e o dia seguinte</p></div>
+            <div class="slot"><span class="time">20h45–21h30</span><p>Desacelerar e preparar para dormir</p></div>
+          </div>
+          <div class="tip">Se estiveres muito cansado, faz apenas 10 minutos de revisão e prioriza o sono.</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-head"><div><h2>Plano de fim de semana</h2><p class="sub">Sábado para aprofundar; domingo para consolidar e preparar a semana.</p></div></div>
+      <div class="weekend">
+        <div>
+          <h3>📘 Sábado — exercícios aprofundados</h3>
+          <div class="weekend-list">
+            <div class="weekend-item"><time>08h00–09h30</time><div><strong>Análise Matemática I</strong><span>Lista de exercícios sem consultar exemplos.</span></div></div>
+            <div class="weekend-item"><time>09h30–09h45</time><div><strong>Pausa</strong><span>Levanta-te, bebe água e descansa.</span></div></div>
+            <div class="weekend-item"><time>09h45–11h15</time><div><strong>Física I</strong><span>Resolver problemas e corrigir erros.</span></div></div>
+            <div class="weekend-item"><time>11h15–11h30</time><div><strong>Pausa</strong><span>Descanso breve.</span></div></div>
+            <div class="weekend-item"><time>11h30–12h15</time><div><strong>Álgebra Linear</strong><span>Praticar os exercícios mais difíceis.</span></div></div>
+            <div class="weekend-item"><time>12h15–14h00</time><div><strong>Almoço e descanso</strong><span>Faz uma pausa de verdade.</span></div></div>
+            <div class="weekend-item"><time>14h00–15h00</time><div><strong>Matemática Geral</strong><span>Consolidar os fundamentos.</span></div></div>
+          </div>
+        </div>
+        <div>
+          <h3>📗 Domingo — revisão e preparação</h3>
+          <div class="weekend-list">
+            <div class="weekend-item"><time>09h00–10h00</time><div><strong>Engenharia de Software</strong><span>Rever conceitos, requisitos e ciclo de desenvolvimento.</span></div></div>
+            <div class="weekend-item"><time>10h00–10h15</time><div><strong>Pausa</strong><span>Descanso breve.</span></div></div>
+            <div class="weekend-item"><time>10h15–11h15</time><div><strong>Lógica de Programação</strong><span>Criar algoritmos sem copiar código.</span></div></div>
+            <div class="weekend-item"><time>11h30–12h00</time><div><strong>Revisão semanal</strong><span>Recordar fórmulas, rever erros e escolher prioridades.</span></div></div>
+            <div class="weekend-item"><time>À tarde</time><div><strong>Tempo livre</strong><span>Descansa. Se houver teste próximo, acrescenta até 60 minutos de revisão.</span></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note">Se perderes uma sessão durante a semana, não sacrifiques o sono para compensar. Reorganiza-a no sábado ou na semana seguinte.</div>
+    </section>
+
+
+    <section class="panel">
+      <div class="section-head"><div><h2>Segunda fase — novo ciclo de disciplinas</h2><p class="sub">Quando terminares a primeira fase, mantém a mesma rotina e troca as disciplinas pelos conteúdos desta etapa.</p></div></div>
+      <div class="note">A primeira fase continua acima. Esta segunda fase tem cinco disciplinas: Física II, Matemática Discreta, Probabilidade e Estatística, Análise Numérica e Redes de Computadores.</div>
+      <div class="schedule" style="margin-top:16px">
+        <article class="day-card">
+          <div class="day-top"><div class="day-icon">⚡</div><div><div class="day-name">Segunda-feira</div><div class="day-sub">Ciências</div></div></div>
+          <p class="subject">Física II</p>
+          <div class="timeline"><div class="slot"><span class="time">17h00–18h00</span><p>Teoria, conceitos e fórmulas</p></div><div class="slot"><span class="time">18h00–18h10</span><p>Pausa</p></div><div class="slot"><span class="time">18h10–19h00</span><p>Problemas e exercícios</p></div></div>
+          <div class="tip">Foco: compreender os princípios e praticar a aplicação das fórmulas estudadas em aula.</div>
+        </article>
+        <article class="day-card">
+          <div class="day-top"><div class="day-icon">🧩</div><div><div class="day-name">Terça-feira</div><div class="day-sub">Matemática</div></div></div>
+          <p class="subject">Matemática Discreta</p>
+          <div class="timeline"><div class="slot"><span class="time">17h00–18h00</span><p>Definições, lógica e exemplos</p></div><div class="slot"><span class="time">18h00–18h10</span><p>Pausa</p></div><div class="slot"><span class="time">18h10–19h00</span><p>Exercícios de demonstração e resolução</p></div></div>
+          <div class="tip">Foco: lógica, conjuntos, relações, combinatória ou grafos, conforme o programa.</div>
+        </article>
+        <article class="day-card">
+          <div class="day-top"><div class="day-icon">📊</div><div><div class="day-name">Quarta-feira</div><div class="day-sub">Dados e estatística</div></div></div>
+          <p class="subject">Probabilidade e Estatística</p>
+          <div class="timeline"><div class="slot"><span class="time">17h00–18h00</span><p>Conceitos, fórmulas e exemplos</p></div><div class="slot"><span class="time">18h00–18h10</span><p>Pausa</p></div><div class="slot"><span class="time">18h10–19h00</span><p>Exercícios e interpretação de resultados</p></div></div>
+          <div class="tip">Foco: perceber o significado dos resultados, não apenas memorizar fórmulas.</div>
+        </article>
+        <article class="day-card">
+          <div class="day-top"><div class="day-icon">➗</div><div><div class="day-name">Quinta-feira</div><div class="day-sub">Métodos matemáticos</div></div></div>
+          <p class="subject">Análise Numérica</p>
+          <div class="timeline"><div class="slot"><span class="time">17h00–18h00</span><p>Métodos e exemplos resolvidos</p></div><div class="slot"><span class="time">18h00–18h10</span><p>Pausa</p></div><div class="slot"><span class="time">18h10–19h00</span><p>Exercícios passo a passo</p></div></div>
+          <div class="tip">Foco: algoritmos numéricos, aproximações, erros e cálculos conforme a matéria lecionada.</div>
+        </article>
+        <article class="day-card">
+          <div class="day-top"><div class="day-icon">🌐</div><div><div class="day-name">Sexta-feira</div><div class="day-sub">Informática</div></div></div>
+          <p class="subject">Redes de Computadores</p>
+          <div class="timeline"><div class="slot"><span class="time">17h00–18h00</span><p>Conceitos, modelos e protocolos</p></div><div class="slot"><span class="time">18h00–18h10</span><p>Pausa</p></div><div class="slot"><span class="time">18h10–19h00</span><p>Diagramas, exercícios e perguntas de revisão</p></div></div>
+          <div class="tip">Foco: compreender como os dispositivos comunicam e relacionar os conceitos com exemplos reais.</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-head"><div><h2>Fim de semana — segunda fase</h2><p class="sub">Mantém o ritmo, dando mais tempo às disciplinas que exigem maior prática.</p></div></div>
+      <div class="weekend">
+        <div><h3>📘 Sábado — aprofundar</h3><div class="weekend-list">
+          <div class="weekend-item"><time>08h00–09h30</time><div><strong>Física II</strong><span>Resolver problemas e rever os passos de cálculo.</span></div></div>
+          <div class="weekend-item"><time>09h45–11h15</time><div><strong>Análise Numérica</strong><span>Praticar métodos e verificar os resultados.</span></div></div>
+          <div class="weekend-item"><time>11h30–12h15</time><div><strong>Matemática Discreta</strong><span>Resolver exercícios e rever definições.</span></div></div>
+          <div class="weekend-item"><time>12h15–14h00</time><div><strong>Almoço e descanso</strong><span>Faz uma pausa real.</span></div></div>
+          <div class="weekend-item"><time>14h00–15h00</time><div><strong>Probabilidade e Estatística</strong><span>Exercícios e interpretação dos resultados.</span></div></div>
+        </div></div>
+        <div><h3>📗 Domingo — consolidar</h3><div class="weekend-list">
+          <div class="weekend-item"><time>09h00–10h00</time><div><strong>Redes de Computadores</strong><span>Rever modelos, protocolos e conceitos-chave.</span></div></div>
+          <div class="weekend-item"><time>10h15–11h00</time><div><strong>Revisão espaçada</strong><span>Recordar matérias estudadas há 1, 3 e 7 dias.</span></div></div>
+          <div class="weekend-item"><time>11h00–11h30</time><div><strong>Mini-teste semanal</strong><span>Responder sem consultar os apontamentos.</span></div></div>
+          <div class="weekend-item"><time>À tarde</time><div><strong>Descanso e preparação</strong><span>Planear a semana e reservar tempo livre.</span></div></div>
+        </div></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-head"><div><h2>Revisão espaçada</h2><p class="sub">Volta à matéria em intervalos para a fixares melhor. Usa o ciclo para cada assunto novo.</p></div></div>
+      <div class="review-grid">
+        <div class="review-step"><strong>Dia 0</strong><span>Aprende a matéria e resolve os primeiros exercícios.</span></div>
+        <div class="review-step"><strong>Dia 1</strong><span>Recorda sem consultar e resolve dois exercícios.</span></div>
+        <div class="review-step"><strong>Dia 3</strong><span>Repete os exercícios em que tiveste dificuldades.</span></div>
+        <div class="review-step"><strong>Dia 7</strong><span>Faz um pequeno teste sem olhar para o caderno.</span></div>
+        <div class="review-step"><strong>Dia 14</strong><span>Confirma se consegues aplicar o conhecimento sozinho.</span></div>
+      </div>
+      <div class="note">Se não conseguires resolver um exercício, volta à explicação e testa novamente mais cedo. Os intervalos são flexíveis.</div>
+    </section>
+
+    <section class="panel">
+      <div class="section-head"><div><h2>Acompanhamento semanal</h2><p class="sub">Marca as sessões concluídas. O acompanhamento inclui tarefas das duas fases e fica guardado neste navegador.</p></div></div>
+      <div class="progress-row"><strong id="progress-label">0 de 7 tarefas concluídas</strong><strong id="progress-percent">0%</strong></div>
+      <div class="progress-track" role="progressbar" aria-label="Progresso semanal" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="checklist" id="checklist">
+        <div class="check-item"><input type="checkbox" id="t1"><label for="t1">Segunda — Análise Matemática I</label></div>
+        <div class="check-item"><input type="checkbox" id="t2"><label for="t2">Terça — Física I</label></div>
+        <div class="check-item"><input type="checkbox" id="t3"><label for="t3">Quarta — Álgebra Linear</label></div>
+        <div class="check-item"><input type="checkbox" id="t4"><label for="t4">Quinta — Matemática Geral</label></div>
+        <div class="check-item"><input type="checkbox" id="t5"><label for="t5">Sexta — Lógica de Programação</label></div>
+        <div class="check-item"><input type="checkbox" id="t6"><label for="t6">Sábado — exercícios de matemática e física</label></div>
+        <div class="check-item"><input type="checkbox" id="t7"><label for="t7">Domingo — Engenharia de Software e revisão (fase 1)</label></div>
+        <div class="check-item"><input type="checkbox" id="t8"><label for="t8">Segunda — Física II (fase 2)</label></div>
+        <div class="check-item"><input type="checkbox" id="t9"><label for="t9">Terça — Matemática Discreta (fase 2)</label></div>
+        <div class="check-item"><input type="checkbox" id="t10"><label for="t10">Quarta — Probabilidade e Estatística (fase 2)</label></div>
+        <div class="check-item"><input type="checkbox" id="t11"><label for="t11">Quinta — Análise Numérica (fase 2)</label></div>
+        <div class="check-item"><input type="checkbox" id="t12"><label for="t12">Sexta — Redes de Computadores (fase 2)</label></div>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="reset-week" type="button">Começar nova semana</button>
+        <button class="btn" id="print-plan" type="button">Imprimir / guardar em PDF</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-head"><div><h2>Regras simples para aprovar</h2><p class="sub">O objetivo é aprender de forma consistente, não estudar até à exaustão.</p></div></div>
+      <div class="routine">
+        <div class="routine-item"><strong>Praticar</strong><span>Faz exercícios, não apenas leitura.</span></div>
+        <div class="routine-item"><strong>Registar erros</strong><span>Guarda os erros num caderno próprio.</span></div>
+        <div class="routine-item"><strong>Recordar</strong><span>Explica a matéria sem olhar para as notas.</span></div>
+        <div class="routine-item"><strong>Priorizar</strong><span>Dedica mais tempo aos temas difíceis e aos testes próximos.</span></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>Plano pessoal de estudos • Ajusta os horários conforme as aulas, deslocações e datas dos testes.</footer>
+
+  <script>
+    (function () {
+      const checkboxes = Array.from(document.querySelectorAll('#checklist input[type="checkbox"]'));
+      const progressLabel = document.getElementById('progress-label');
+      const progressPercent = document.getElementById('progress-percent');
+      const progressFill = document.getElementById('progress-fill');
+      const progressBar = document.getElementById('progress-bar');
+      const storageKey = 'meuPlanoEstudosChecklistV2';
+
+      function updateProgress() {
+        const completed = checkboxes.filter((checkbox) => checkbox.checked).length;
+        const percent = Math.round((completed / checkboxes.length) * 100);
+        progressLabel.textContent = `${completed} de ${checkboxes.length} tarefas concluídas`;
+        progressPercent.textContent = `${percent}%`;
+        progressFill.style.width = `${percent}%`;
+        progressBar.setAttribute('aria-valuenow', String(percent));
+        checkboxes.forEach((checkbox) => {
+          checkbox.closest('.check-item').classList.toggle('done', checkbox.checked);
+        });
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(checkboxes.map((checkbox) => checkbox.checked)));
+        } catch (error) {
+          // A página continua funcional mesmo se o navegador bloquear o armazenamento local.
+        }
+      }
+
+      try {
+        const saved = JSON.parse(localStorage.getItem(storageKey) || 'null');
+        if (Array.isArray(saved)) {
+          checkboxes.forEach((checkbox, index) => {
+            checkbox.checked = Boolean(saved[index]);
+          });
+        }
+      } catch (error) {
+        // Ignora dados guardados inválidos.
+      }
+
+      checkboxes.forEach((checkbox) => checkbox.addEventListener('change', updateProgress));
+      document.getElementById('reset-week').addEventListener('click', () => {
+        checkboxes.forEach((checkbox) => { checkbox.checked = false; });
+        updateProgress();
+      });
+      document.getElementById('print-plan').addEventListener('click', () => window.print());
+      updateProgress();
+    })();
+  </script>
+</body>
+</html>
